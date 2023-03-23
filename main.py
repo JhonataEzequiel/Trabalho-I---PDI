@@ -1,4 +1,4 @@
-from turn_negative import *
+from modules import *
 img = Image.open("image.jpg")
 
 img = turn_negative(img)
