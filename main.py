@@ -1,10 +1,6 @@
 from modules import *
 img = Image.open("image.jpg")
 
-img = turn_negative(img)
-
-img.show()
-
-img = turn_negative(img)
-
-img.show()
+yiq_pixels = rgb_to_yiq(img)
+img2 = yiq_to_rgb(yiq_pixels)
+img2.show()
