@@ -7,3 +7,6 @@ img2.show()
 
 img2 = turn_negative(img2)
 img2.show()
+
+img = negative_on_y(img)
+img.show()

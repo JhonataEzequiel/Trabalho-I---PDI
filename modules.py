@@ -3,24 +3,10 @@ from PIL import Image, ImageOps
 import numpy as np
 
 
-def get_pixels(image: Image = None):
+def get_negative_pixels(image: Image = None) -> List:
     red_pixels = [[] for _ in range(image.size[0] - 1)]
     green_pixels = [[] for _ in range(image.size[0] - 1)]
     blue_pixels = [[] for _ in range(image.size[0] - 1)]
-    for r in range(image.size[0] - 1):
-        for c in range(image.size[1] - 1):
-            colors = image.getpixel((r, c))
-            red_pixels[r].append(colors[0])
-            green_pixels[r].append(colors[1])
-            blue_pixels[r].append(colors[2])
-
-    return [red_pixels, green_pixels, blue_pixels]
-
-
-def get_negative_pixels(image: Image = None) -> List:
-    red_pixels = [[] for _ in range(image.size[0]-1)]
-    green_pixels = [[] for _ in range(image.size[0]-1)]
-    blue_pixels = [[] for _ in range(image.size[0]-1)]
     for r in range(image.size[0] - 1):
         for c in range(image.size[1] - 1):
             colors = image.getpixel((r, c))
@@ -43,16 +29,16 @@ def rgb_to_yiq(image: Image = None):
     y_pixels = [[_ for _ in range(image.size[1] - 1)] for _ in range(image.size[0] - 1)]
     i_pixels = [[_ for _ in range(image.size[1] - 1)] for _ in range(image.size[0] - 1)]
     q_pixels = [[_ for _ in range(image.size[1] - 1)] for _ in range(image.size[0] - 1)]
-    for r in range(image.size[0]-1):
-        for c in range(image.size[1]-1):
+    for r in range(image.size[0] - 1):
+        for c in range(image.size[1] - 1):
             grey_tone = False
             colors = image.getpixel((r, c))
             if colors[0] == colors[1] == colors[2]:
                 grey_tone = True
             if not grey_tone:
-                y = 0.299*colors[0] + 0.587*colors[1] + 0.114*colors[2]
-                i = 0.596*colors[0] - 0.274*colors[1] - 0.322*colors[2]
-                q = 0.211*colors[0] - 0.523*colors[1] + 0.312*colors[2]
+                y = 0.299 * colors[0] + 0.587 * colors[1] + 0.114 * colors[2]
+                i = 0.596 * colors[0] - 0.274 * colors[1] - 0.322 * colors[2]
+                q = 0.211 * colors[0] - 0.523 * colors[1] + 0.312 * colors[2]
             else:
                 y = colors[0]
                 i = 0
@@ -93,3 +79,11 @@ def yiq_to_rgb(pixels: List[List[List[float]]]):
     rotated_pixels = np.rot90(pixels, axes=(1, 0))
     new_image = Image.fromarray(rotated_pixels)
     return new_image
+
+
+def negative_on_y(image: Image = None):
+    yiq_pixels = rgb_to_yiq(image)
+    for i in range(len(yiq_pixels[0])):
+        for r in range(len(yiq_pixels[0][0])):
+            yiq_pixels[0][i][r] = 255 - yiq_pixels[0][i][r]
+    return yiq_to_rgb(yiq_pixels)
