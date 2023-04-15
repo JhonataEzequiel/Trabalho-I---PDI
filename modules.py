@@ -69,6 +69,7 @@ def get_rgb_pixels_from_yiq(pixels: List[List[List[float]]]):
 def yiq_to_rgb(pixels: List[List[List[float]]]):
     pixels = get_rgb_pixels_from_yiq(pixels)
     rotated_pixels = np.rot90(pixels, axes=(1, 0))
+    rotated_pixels = np.flip(rotated_pixels, axis=1)
     new_image = Image.fromarray(rotated_pixels)
     return new_image
 

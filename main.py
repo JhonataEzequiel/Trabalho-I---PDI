@@ -2,6 +2,11 @@ from modules import *
 original_img = Image.open("image.jpg")
 original_img.show(title="Original Image")
 
+rgb_yiq_rgb = Image.open("image.jpg")
+rgb_yiq_rgb = rgb_to_yiq(rgb_yiq_rgb)
+rgb_yiq_rgb = yiq_to_rgb(rgb_yiq_rgb)
+rgb_yiq_rgb.show(title="RGB to YIQ to RGB")
+
 negative_img = Image.open("image.jpg")
 negative_img = turn_negative(negative_img)
 negative_img.show(title="Negative RGB")
