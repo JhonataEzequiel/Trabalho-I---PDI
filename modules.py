@@ -31,18 +31,10 @@ def rgb_to_yiq(image: Image = None):
     q_pixels = [[_ for _ in range(image.size[1] - 1)] for _ in range(image.size[0] - 1)]
     for r in range(image.size[0] - 1):
         for c in range(image.size[1] - 1):
-            grey_tone = False
             colors = image.getpixel((r, c))
-            if colors[0] == colors[1] == colors[2]:
-                grey_tone = True
-            if not grey_tone:
-                y = 0.299 * colors[0] + 0.587 * colors[1] + 0.114 * colors[2]
-                i = 0.596 * colors[0] - 0.274 * colors[1] - 0.322 * colors[2]
-                q = 0.211 * colors[0] - 0.523 * colors[1] + 0.312 * colors[2]
-            else:
-                y = colors[0]
-                i = 0
-                q = 0
+            y = 0.299 * colors[0] + 0.587 * colors[1] + 0.114 * colors[2]
+            i = 0.596 * colors[0] - 0.274 * colors[1] - 0.322 * colors[2]
+            q = 0.211 * colors[0] - 0.523 * colors[1] + 0.312 * colors[2]
             y_pixels[r][c] = y
             i_pixels[r][c] = i
             q_pixels[r][c] = q
@@ -87,3 +79,43 @@ def negative_on_y(image: Image = None):
         for r in range(len(yiq_pixels[0][0])):
             yiq_pixels[0][i][r] = 255 - yiq_pixels[0][i][r]
     return yiq_to_rgb(yiq_pixels)
+
+
+def median_ixj(i: int = 0, j: int = 0, image: Image = None, extension: bool = False):
+    if i % 2 == 0 or j % 2 == 0:
+        raise ValueError(" 'i' and 'j' must be odd")
+    median_image = median_filter(image, (i, j), extension)
+
+    return median_image
+
+
+def median_filter(image: Image, size: tuple, zero_extension: bool = False):
+    im = np.array(image)
+
+    m, n = size
+    window = np.ones((m, n))
+
+    if zero_extension:
+        result = np.zeros_like(im)
+        offset = (m // 2, n // 2)
+        padded_im = np.pad(im, offset, mode='constant')
+        for i in range(im.shape[2]):
+            for x in range(im.shape[0]):
+                for y in range(im.shape[1]):
+                    sub_image = padded_im[x: x + m, y: y + n, i]
+                    result[x, y, i] = np.median(sub_image * window)
+        result = np.uint8(result)
+
+    else:
+        result = np.zeros_like(im)
+        for i in range(im.shape[2]):
+            channel = im[:, :, i]
+            padded_channel = np.pad(channel, (m // 2, n // 2), mode='edge')
+            for x in range(im.shape[0]):
+                for y in range(im.shape[1]):
+                    sub_image = padded_channel[x: x + m, y: y + n]
+                    result[x, y, i] = np.median(sub_image * window)
+        result = np.uint8(result)
+
+    return Image.fromarray(result)
+
