@@ -116,71 +116,57 @@ def negative_on_y(image: Image = None):
     return yiq_to_rgb(yiq_pixels)
 
 
-def median_ixj(i: int = 0, j: int = 0, image: Image = None, extension: bool = False):
+def median_ixj(i: int = 0, j: int = 0, image: Image = None):
     """
     Verifies if i and j are odd, and calls the function to apply the median filter. If i or j are odd, the function will
     raise an error.
     :param i: quantity of lines in the image
     :param j: quantity of columns in the image
     :param image: Original image in RGB format
-    :param extension: boolean that says if the image will have zero extensions or not
     :return: new image with the filter applied.
     """
     if i % 2 == 0 or j % 2 == 0:
         raise ValueError(" 'i' and 'j' must be odd")
-    median_image = median_filter(image, (i, j), extension)
+    median_image = median_filter(image, (i, j))
 
     return median_image
 
 
-def median_filter(image: Image, size: tuple, zero_extension: bool = False):
+def median_filter(image: Image, size: tuple):
     """
     Applies the median filter to an image.
     :param image: original image in RGB format
     :param size: size of the median filter (ixj or mxn)
-    :param zero_extension: boolean that says if it will have zero extension or not
     :return: new image with the filter applied.
     """
     im = np.array(image)
-
     m, n = size
+
     # window will be our kernel or 'mask', containing all values equals to 'one' and being m x n
+    # because it has only 'ones', it can serve as a mask for the function np.median, used later when applying the filter
     window = np.ones((m, n))
 
-    if zero_extension:
-        # the result variable will be initialized with zeros in the size of the original image
-        result = np.zeros_like(im)
-        # offset will determine how many zeros will be added to the edge of the image in order to extend it
-        offset = (m // 2, n // 2)
+    # the result variable will be initialized with zeros in the size of the original image
+    result = np.zeros_like(im)
+    # this tuple will contain how many rows and columns must be extended to apply the filter
+    mxn_extended = (m // 2, n // 2)
+    for i in range(im.shape[2]):
+        # channel will have all the values of RGB in the image
+        channel = im[:, :, i]
         # padded_im will be the extended image with the necessary number of zeros. If it is not given a value to the
         # param 'constant_values', it will be zero, so the image will be extended by zeros
-        padded_im = np.pad(im, offset, mode='constant')
-        for i in range(im.shape[2]):
-            for x in range(im.shape[0]):
-                for y in range(im.shape[1]):
-                    """
-                    the sub_image will be the used to determine witch part of the image will be the one used to
-                    calculate the median with the np.median function. The sub_image will be multiplied by the 'mask', in
-                    this case, 'window', and passed as a parameter.
-                    """
-                    sub_image = padded_im[x: x + m, y: y + n, i]
-                    result[x, y, i] = np.median(sub_image * window)
-        # the final array will be converted to uint8 in order to use less memory
-        result = np.uint8(result)
-
-    else:
-        # the result image will be initialized with zeros this time, and then it will be filled with the new image
-        result = np.zeros_like(im)
-        for i in range(im.shape[2]):
-            # channel will have all the values of RGB in the image
-            channel = im[:, :, i]
-            # padded_channel will be used to apply the filter in the borders of the image as well
-            padded_channel = np.pad(channel, (m // 2, n // 2), mode='edge')
-            for x in range(im.shape[0]):
-                for y in range(im.shape[1]):
-                    sub_image = padded_channel[x: x + m, y: y + n]
-                    result[x, y, i] = np.median(sub_image * window)
-        result = np.uint8(result)
+        padded_channel = np.pad(channel, mxn_extended, mode='edge')
+        for x in range(im.shape[0]):
+            for y in range(im.shape[1]):
+                """
+                the sub_image will be the used to determine witch part of the image will be the one used to
+                calculate the median with the np.median function. The sub_image will be multiplied by the 'mask', in
+                this case, 'window', and passed as a parameter.
+                """
+                sub_image = padded_channel[x: x + m, y: y + n]
+                result[x, y, i] = np.median(sub_image * window)
+    # the final array will be converted to uint8 in order to use less memory
+    result = np.uint8(result)
 
     return Image.fromarray(result)
 
