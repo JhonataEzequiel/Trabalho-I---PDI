@@ -1,5 +1,5 @@
 from modules import *
-original_img = Image.open("image.jpg")
+"""original_img = Image.open("image.jpg")
 original_img.show(title="Original Image")
 
 rgb_yiq_rgb = Image.open("image.jpg")
@@ -29,4 +29,8 @@ median_7x7_no_extension.show(title="Median 7x7 no extension")
 
 median_7x7_extension = Image.open("image.jpg")
 median_7x7_extension = median_ixj(7, 7, median_7x7_extension, True)
-median_7x7_extension.show(title="Median 7x7 with extension")
+median_7x7_extension.show(title="Median 7x7 with extension")"""
+
+median_7x7_no_extension = Image.open("image.jpg")
+median_7x7_no_extension = median_ixj(7, 7, median_7x7_no_extension)
+median_7x7_no_extension.show(title="Median 7x7 no extension")
