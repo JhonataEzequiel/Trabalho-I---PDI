@@ -1,6 +1,7 @@
-from typing import List
+from typing import List, Tuple
 from PIL import Image
 import numpy as np
+from numpy import ndarray
 
 
 def get_negative_pixels(image: Image = None) -> List:
@@ -132,7 +133,7 @@ def median_ixj(i: int = 0, j: int = 0, image: Image = None):
     return median_image
 
 
-def median_filter(image: Image, size: tuple):
+def median_filter(image: Image, size: Tuple[int, int]):
     """
     Applies the median filter to an image.
     :param image: original image in RGB format
@@ -155,7 +156,7 @@ def median_filter(image: Image, size: tuple):
         channel = im[:, :, i]
         # padded_im will be the extended image with the necessary number of zeros. If it is not given a value to the
         # param 'constant_values', it will be zero, so the image will be extended by zeros
-        padded_channel = np.pad(channel, mxn_extended, mode='edge')
+        padded_channel = np.pad(channel, mxn_extended, mode='constant')
         for x in range(im.shape[0]):
             for y in range(im.shape[1]):
                 """
@@ -170,3 +171,31 @@ def median_filter(image: Image, size: tuple):
 
     return Image.fromarray(result)
 
+
+def call_correlation_mxn(image: Image, correlational_filter: List[ndarray], offset: Tuple[int, int]):
+
+    size = correlational_filter.shape[0], correlational_filter.shape[1]
+
+    m, n = size
+    if m < 0 or n < 0 or type(m) != int or type(n) != int:
+        raise ValueError("m and n must be a positive integer!")
+    return correlational(image, size, correlational_filter, offset)
+
+
+def correlational(image: Image, size: Tuple[int, int], correlational_filter: List[ndarray], offset: Tuple[int, int]):
+    im = np.array(image)
+    m, n = size
+    window = correlational_filter
+    mxn_extended = (m // 2, n // 2)
+    result = np.zeros_like(im)
+    for i in range(im.shape[2]):
+        channel = im[:, :, i]
+        padded_channel = np.pad(channel, mxn_extended, mode='constant')
+        for x in range(im.shape[0]):
+            for y in range(im.shape[1]):
+                sub_image = padded_channel[x: x + m, y: y + n]
+                new_value = abs(np.sum(sub_image * window))
+                result[x: x + offset[0], y: y + offset[1], i] = new_value
+
+    result = np.uint8(result)
+    return Image.fromarray(result)
