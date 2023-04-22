@@ -279,7 +279,7 @@ def correlational_filters(file_name: str):
         if correlational_filters[i] == '':
             j += 1
 
-    finished_arrays = [_ for _ in range(len(filters))]
+    finished_arrays = [np.array(_) for _ in range(len(filters))]
     for j in range(len(filters)):
         filters[j].pop(0)
         for i in range(len(filters[j])):
@@ -298,7 +298,7 @@ def correlational_filters(file_name: str):
     for i in range(len(finished_arrays)):
         im = call_correlation_mxn(im, finished_arrays[i], offsets[i])
 
-    if (file_name in ["tests/sobel_horizontal.txt", "tests/sobel_vertical.txt"]):
+    if file_name in ["tests/sobel_horizontal.txt", "tests/sobel_vertical.txt"]:
         im = histogram_expansion(im)
 
     im.show()
