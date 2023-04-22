@@ -4,7 +4,7 @@ import numpy as np
 from numpy import ndarray
 
 
-def get_negative_pixels(image: Image = None) -> List:
+def get_negative_pixels(image: Image) -> List:
     """
     This function returns every pixel in its negative counter-part.
     :param image: Original Image in RGB
@@ -23,7 +23,7 @@ def get_negative_pixels(image: Image = None) -> List:
     return [red_pixels, green_pixels, blue_pixels]
 
 
-def turn_negative(image: Image = None):
+def turn_negative(image: Image) -> Image:
     """
     Transforms the image in its negative RGB counter-part
     :param image: Original image in RGB
@@ -37,7 +37,7 @@ def turn_negative(image: Image = None):
     return image
 
 
-def rgb_to_yiq(image: Image = None):
+def rgb_to_yiq(image: Image) -> List[List[List[float]]]:
     """
     Receives an RGB image and makes the necessary adjusts to convert each pixel to its YIQ counter-part utilizing the
     correct formula for it.
@@ -62,7 +62,7 @@ def rgb_to_yiq(image: Image = None):
     return [y_pixels, i_pixels, q_pixels]
 
 
-def get_rgb_pixels_from_yiq(pixels: List[List[List[float]]]):
+def get_rgb_pixels_from_yiq(pixels: List[List[List[float]]]) -> ndarray:
     """
     Similar to the RGB-YIQ function, but this time it does the opposite. It receives a list containing every pixel in
     YIQ format, and returns them in RGB format after conversion.
@@ -97,7 +97,7 @@ def get_rgb_pixels_from_yiq(pixels: List[List[List[float]]]):
     return new_pixels
 
 
-def yiq_to_rgb(pixels: List[List[List[float]]]):
+def yiq_to_rgb(pixels: List[List[List[float]]]) -> Image:
     """
     Transforms an image (in this case, it is a list of values that characterize a pixel) in YIQ into RGB calling an
     auxiliary function to make the calculations. It rotates the pixels as well to adjust the image correctly after the
@@ -112,7 +112,7 @@ def yiq_to_rgb(pixels: List[List[List[float]]]):
     return new_image
 
 
-def negative_on_y(image: Image = None):
+def negative_on_y(image: Image) -> Image:
     """
     Turns the Y from the YIQ color scheme into negative and returns an image of the result.
     :param image: Original image in RGB format
@@ -125,7 +125,7 @@ def negative_on_y(image: Image = None):
     return yiq_to_rgb(yiq_pixels)
 
 
-def median_ixj(i: int = 0, j: int = 0, image: Image = None):
+def median_ixj(i: int, j: int, image: Image) -> Image:
     """
     Verifies if i and j are odd, and calls the function to apply the median filter. If i or j are odd, the function will
     raise an error.
@@ -141,7 +141,7 @@ def median_ixj(i: int = 0, j: int = 0, image: Image = None):
     return median_image
 
 
-def median_filter(image: Image, size: Tuple[int, int]):
+def median_filter(image: Image, size: Tuple[int, int]) -> Image:
     """
     Applies the median filter to an image.
     :param image: original image in RGB format
@@ -181,7 +181,7 @@ def median_filter(image: Image, size: Tuple[int, int]):
     return Image.fromarray(result)
 
 
-def call_correlation_mxn(image: Image, correlational_filter: ndarray, offset: Tuple[int, int]):
+def call_correlation_mxn(image: Image, correlational_filter: ndarray, offset: Tuple[int, int]) -> Image:
     """
     This function checks if the size of the filter is valid and then calls the correlational filter
     :param image: image witch the filter will be applied
@@ -198,7 +198,7 @@ def call_correlation_mxn(image: Image, correlational_filter: ndarray, offset: Tu
     return correlational(image, size, correlational_filter, offset)
 
 
-def correlational(image: Image, size: Tuple[int, int], correlational_filter: ndarray, offset: Tuple[int, int]):
+def correlational(image: Image, size: Tuple[int, int], correlational_filter: ndarray, offset: Tuple[int, int]) -> Image:
     """
     This function will apply a correlational filter
     :param image: image witch the filter will be applied
@@ -260,7 +260,7 @@ def histogram_expansion(image: Image) -> Image:
     return output
 
 
-def read_correlational_filters(file_name: str):
+def read_correlational_filters(file_name: str) -> None:
     with open(file_name) as f:
         lines = f.readlines()
 
