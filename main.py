@@ -1,9 +1,8 @@
 import os
-import numpy as np
 from modules import *
 
 directory = "tests/"
-test_image = directory+"image.jpg"
+test_image = directory+"image.png"
 
 original_img = Image.open(test_image)
 original_img.show(title="Original Image")

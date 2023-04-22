@@ -293,7 +293,7 @@ def correlational_filters(file_name: str):
 
         finished_arrays[j] = np.array(np.array(filters[j]))
 
-    im = Image.open("tests/image.jpg")
+    im = Image.open("tests/image.png")
     for i in range(len(finished_arrays)):
         im = call_correlation_mxn(im, finished_arrays[i], offsets[i])
 
