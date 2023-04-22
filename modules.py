@@ -32,7 +32,8 @@ def turn_negative(image: Image = None):
     pixels = get_negative_pixels(image)
     for r in range(image.size[0] - 1):
         for c in range(image.size[1] - 1):
-            image.putpixel((r, c), (pixels[0][r][c], pixels[1][r][c], pixels[2][r][c]))
+            image.putpixel(
+                (r, c), (pixels[0][r][c], pixels[1][r][c], pixels[2][r][c]))
     return image
 
 
@@ -43,9 +44,12 @@ def rgb_to_yiq(image: Image = None):
     :param image: Original image in RGB
     :return: List containing every component of every pixel in YIQ format
     """
-    y_pixels = [[_ for _ in range(image.size[1] - 1)] for _ in range(image.size[0] - 1)]
-    i_pixels = [[_ for _ in range(image.size[1] - 1)] for _ in range(image.size[0] - 1)]
-    q_pixels = [[_ for _ in range(image.size[1] - 1)] for _ in range(image.size[0] - 1)]
+    y_pixels = [[_ for _ in range(image.size[1] - 1)]
+                for _ in range(image.size[0] - 1)]
+    i_pixels = [[_ for _ in range(image.size[1] - 1)]
+                for _ in range(image.size[0] - 1)]
+    q_pixels = [[_ for _ in range(image.size[1] - 1)]
+                for _ in range(image.size[0] - 1)]
     for r in range(image.size[0] - 1):
         for c in range(image.size[1] - 1):
             colors = image.getpixel((r, c))
@@ -65,12 +69,16 @@ def get_rgb_pixels_from_yiq(pixels: List[List[List[float]]]):
     :param pixels: List containing the pixels in YIQ format
     :return: np array containing every pixel in RGB format
     """
-    new_pixels = np.empty([len(pixels[0]), len(pixels[0][0]), 3], dtype=np.uint8)
+    new_pixels = np.empty(
+        [len(pixels[0]), len(pixels[0][0]), 3], dtype=np.uint8)
     for i in range(len(pixels[0])):
         for c in range(len(pixels[0][0])):
-            r = pixels[0][i][c] + 0.956 * pixels[1][i][c] + 0.621 * pixels[2][i][c]
-            g = pixels[0][i][c] - 0.272 * pixels[1][i][c] - 0.647 * pixels[2][i][c]
-            b = pixels[0][i][c] - 1.106 * pixels[1][i][c] + 1.703 * pixels[2][i][c]
+            r = pixels[0][i][c] + 0.956 * \
+                pixels[1][i][c] + 0.621 * pixels[2][i][c]
+            g = pixels[0][i][c] - 0.272 * \
+                pixels[1][i][c] - 0.647 * pixels[2][i][c]
+            b = pixels[0][i][c] - 1.106 * \
+                pixels[1][i][c] + 1.703 * pixels[2][i][c]
 
             r = round(r)
             g = round(g)
@@ -245,6 +253,51 @@ def histogram_expansion(image: Image) -> Image:
     im = np.array(image)
     min_intensity = np.min(image)
     max_intensity = np.max(image)
-    im_expanded = (im - min_intensity) * (255 / (max_intensity - min_intensity))
+    im_expanded = (im - min_intensity) * \
+        (255 / (max_intensity - min_intensity))
     output = Image.fromarray(np.uint8(im_expanded))
     return output
+
+
+def correlational_filters(file_name: str):
+    with open(file_name) as f:
+        lines = f.readlines()
+
+    correlational_filters = [line.strip() for line in lines]
+
+    offsets = [offset for offset in correlational_filters if ',' in offset]
+    offsets = [(int(offset.split(', ')[0]), int(offset.split(', ')[1]))
+               for offset in offsets]
+
+    filters = [[] for _ in correlational_filters if ',' in _]
+
+    j = 0
+    for i in range(len(correlational_filters)):
+        if correlational_filters[i] != '':
+            filters[j].append(correlational_filters[i])
+        if correlational_filters[i] == '':
+            j += 1
+
+    finished_arrays = [_ for _ in range(len(filters))]
+    for j in range(len(filters)):
+        filters[j].pop(0)
+        for i in range(len(filters[j])):
+            filters[j][i] = filters[j][i].split(' ')
+            for h in range(len(filters[j][i])):
+                treated_float = filters[j][i][h] if '/' in filters[j][i][h] else None
+                if treated_float:
+                    split_float = filters[j][i][h].split('/')
+                    split_float = int(split_float[0])/int(split_float[1])
+                    filters[j][i][h] = split_float
+            filters[j][i] = [float(_) for _ in filters[j][i]]
+
+        finished_arrays[j] = np.array(np.array(filters[j]))
+
+    im = Image.open("tests/image.jpg")
+    for i in range(len(finished_arrays)):
+        im = call_correlation_mxn(im, finished_arrays[i], offsets[i])
+
+    if (file_name in ["tests/sobel_horizontal.txt", "tests/sobel_vertical.txt"]):
+        im = histogram_expansion(im)
+
+    im.show()
