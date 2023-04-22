@@ -1,6 +1,6 @@
-# Projeto 1 de Processamento e Digitalização de Imagem
+# Filtros e Correlação de Processamento e Digitalização de Imagem
 
-Este projeto foi desenvolvido com técnicas de filtros e correlação de imagens para a disciplina de Processamento e Digitalização de Imagem.
+Este projeto foi desenvolvido com técnicas de filtros e correlação de imagens para a disciplina de Processamento e Digitalização de Imagem do semestre 2022.2 ministrada pelo professor Leonardo Vidal Batista.
 
 ## Especificação do projeto
 
@@ -24,9 +24,20 @@ seguinte funcionalidade:
 ## Módulos
 
 - get_negative_pixels: Captura todos os pixels da imagem, separa suas cores em listas e converte subtraindo o valor 255 do valor de cada cor, ou seja, faz a subtração para o (Red, Green and Blue) da imagem e retorna o resultado em uma lista de listas.
-- turn_negative: Chama a função (get_negative_pixels), itera e transforma os pixels retornados em imagem e retorna a imagem.
+- turn_negative: Chama a função (get_negative_pixels), itera transformando os pixels retornados em imagem e retorna a imagem.
 - rgb_to_yiq:
 
 ## Execução
 
-Para a execução do projeto basta executar a main
+Para a execução do projeto basta executar no terminal:
+
+```
+python main.py
+```
+
+## Colaboradores
+
+| <a href="https://www.linkedin.com/in/jhonata-ezequiel-alves-de-miranda/" target="_blank">**Jhonata Ezequiel**</a> | <a href="https://www.linkedin.com/in/matheushonorio" target="_blank">**Matheus Honório**</a> |                                                  <a href="https://www.linkedin.com/in/victoria-monteiro-pontes/" target="_blank">**Victoria Monteiro**</a>                                                   |     |
+| :---------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-:
+|               <img src="https://avatars.githubusercontent.com/u/57595331?v=4" width="200px"> </img>               |    <img src="https://avatars.githubusercontent.com/u/52137826?v=4" width="200px"> </img>     | <img src="https://media.licdn.com/dms/image/C4D03AQGa5dfKibulxw/profile-displayphoto-shrink_200_200/0/1636472208301?e=1687392000&v=beta&t=-U1gGR5AMnO7caqwe-kugqTJQwXH7dynzES7tdJ9rfE" width="200px"> </img> |     |
+|           <a href="https://github.com/JhonataEzequiel" target="_blank">`github.com/JhonataEzequiel`</a>           |    <a href="https://github.com/mthonorio" target="_blank">`github.com/MatheusHonorio`</a>    |                                                            <a href="https://github.com/vmp309" target="_blank">`github.com/VictoriaMonteiro`</a>                                                             |     |     |
