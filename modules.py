@@ -259,7 +259,7 @@ def histogram_expansion(image: Image) -> Image:
     return output
 
 
-def correlational_filters(file_name: str):
+def read_correlational_filters(file_name: str):
     with open(file_name) as f:
         lines = f.readlines()
 
