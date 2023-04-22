@@ -172,7 +172,14 @@ def median_filter(image: Image, size: Tuple[int, int]):
     return Image.fromarray(result)
 
 
-def call_correlation_mxn(image: Image, correlational_filter: List[ndarray], offset: Tuple[int, int]):
+def call_correlation_mxn(image: Image, correlational_filter: ndarray, offset: Tuple[int, int]):
+    """
+    This function checks if the size of the filter is valid and then calls the correlational filter
+    :param image: image witch the filter will be applied
+    :param correlational_filter: array containing the filter and its values
+    :param offset: offset to be considered by the function
+    :return: image with the filter applied
+    """
 
     size = correlational_filter.shape[0], correlational_filter.shape[1]
 
@@ -182,20 +189,62 @@ def call_correlation_mxn(image: Image, correlational_filter: List[ndarray], offs
     return correlational(image, size, correlational_filter, offset)
 
 
-def correlational(image: Image, size: Tuple[int, int], correlational_filter: List[ndarray], offset: Tuple[int, int]):
+def correlational(image: Image, size: Tuple[int, int], correlational_filter: ndarray, offset: Tuple[int, int]):
+    """
+    This function will apply a correlational filter
+    :param image: image witch the filter will be applied
+    :param size: size of the window of the filter (mxn)
+    :param correlational_filter: array containing the filter and its values
+    :param offset: offset to be considered by the function
+    :return:
+    """
     im = np.array(image)
     m, n = size
     window = correlational_filter
-    mxn_extended = (m // 2, n // 2)
+
+    # how many rows and columns will be expanded by 0
+    mxn_extended = (m//2, n//2)
+
+    # final image will be the 'result'
     result = np.zeros_like(im)
+
     for i in range(im.shape[2]):
+        # getting all the values of R, then G, then B
         channel = im[:, :, i]
+        # expanding the array with 0s according to the needs of the filter
         padded_channel = np.pad(channel, mxn_extended, mode='constant')
         for x in range(im.shape[0]):
             for y in range(im.shape[1]):
+                # getting a sub_image that starts at position x and finishes at position x+m
+                # and starts at position y and finishes at position y+n
                 sub_image = padded_channel[x: x + m, y: y + n]
-                new_value = abs(np.sum(sub_image * window))
-                result[x: x + offset[0], y: y + offset[1], i] = new_value
+
+                # if the sub_image has not the same size of the window, it means that the filter is already applied
+                # to the image
+                if sub_image.shape == window.shape:
+                    # the new value will be the absolute value because some filters can return negative numbers
+                    new_value = abs(np.sum(sub_image * window))
+                    """
+                    if the image is ixj, and x+offset[0] is larger than i or y+offset[1] is larger than j, it means
+                    that the filter is already applied to all the image, because the offset will be after the end of the
+                    image
+                    """
+                    if x + offset[0] <= im.shape[0] - 1 and y + offset[1] <= im.shape[1] - 1:
+                        result[x + offset[0], y + offset[1], i] = new_value
 
     result = np.uint8(result)
     return Image.fromarray(result)
+
+
+def histogram_expansion(image: Image) -> Image:
+    """
+    the histogram expansion will be from [0, 255]. It will apply the formula to every pixel in the image.
+    :param image: image that will receive the expansion
+    :return: output image with the expansion applied
+    """
+    im = np.array(image)
+    min_intensity = np.min(image)
+    max_intensity = np.max(image)
+    im_expanded = (im - min_intensity) * (255 / (max_intensity - min_intensity))
+    output = Image.fromarray(np.uint8(im_expanded))
+    return output

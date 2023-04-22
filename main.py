@@ -26,7 +26,7 @@ median_7x7_extension = median_ixj(7, 7, median_7x7_extension)
 median_7x7_extension.show(title="Median 7x7 with extension")
 """
 
-with open("cf1.txt") as f:
+with open("soma.txt") as f:
     lines = f.readlines()
 
 correlational_filters = [line.strip() for line in lines]
@@ -58,11 +58,12 @@ for j in range(len(filters)):
 
     finished_arrays[j] = np.array(np.array(filters[j]))
 
-original_img = Image.open("veia.png")
-im = original_img
+im = Image.open("image.jpg")
 for i in range(len(finished_arrays)):
     im = call_correlation_mxn(im, finished_arrays[i], offsets[i])
 
+im.show()
+im = histogram_expansion(im)
 im.show()
 
 f.close()
