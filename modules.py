@@ -173,7 +173,8 @@ def median_filter(image: Image, size: Tuple[int, int]):
                 this case, 'window', and passed as a parameter.
                 """
                 sub_image = padded_channel[x: x + m, y: y + n]
-                result[x, y, i] = np.median(sub_image * window)
+                if sub_image.shape == window.shape:
+                    result[x, y, i] = np.median(sub_image * window)
     # the final array will be converted to uint8 in order to use less memory
     result = np.uint8(result)
 
@@ -278,7 +279,7 @@ def read_correlational_filters(file_name: str):
         if correlational_filters[i] == '':
             j += 1
 
-    finished_arrays = [_ for _ in range(len(filters))]
+    finished_arrays = [np.array(_) for _ in range(len(filters))]
     for j in range(len(filters)):
         filters[j].pop(0)
         for i in range(len(filters[j])):
@@ -293,11 +294,11 @@ def read_correlational_filters(file_name: str):
 
         finished_arrays[j] = np.array(np.array(filters[j]))
 
-    im = Image.open("tests/image.jpg")
+    im = Image.open("tests/image.png")
     for i in range(len(finished_arrays)):
         im = call_correlation_mxn(im, finished_arrays[i], offsets[i])
 
-    if (file_name in ["tests/sobel_horizontal.txt", "tests/sobel_vertical.txt"]):
+    if file_name in ["tests/sobel_horizontal.txt", "tests/sobel_vertical.txt"]:
         im = histogram_expansion(im)
 
     im.show()

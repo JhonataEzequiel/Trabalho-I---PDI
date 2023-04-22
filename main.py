@@ -1,10 +1,9 @@
 import os
-import numpy as np
 from modules import *
 import timeit
 
 directory = "tests/"
-test_image = directory+"image.jpg"
+test_image = directory+"image.png"
 
 # Show the original image
 original_img = Image.open(test_image)
