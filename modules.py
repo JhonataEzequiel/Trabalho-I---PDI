@@ -173,7 +173,8 @@ def median_filter(image: Image, size: Tuple[int, int]):
                 this case, 'window', and passed as a parameter.
                 """
                 sub_image = padded_channel[x: x + m, y: y + n]
-                result[x, y, i] = np.median(sub_image * window)
+                if sub_image.shape == window.shape:
+                    result[x, y, i] = np.median(sub_image * window)
     # the final array will be converted to uint8 in order to use less memory
     result = np.uint8(result)
 
