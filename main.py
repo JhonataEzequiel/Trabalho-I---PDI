@@ -33,8 +33,12 @@ end_time = timeit.default_timer()
 print("Median 3x3 with extension: ", end_time - begin_time)
 median_3x3_extension.show(title="Median 3x3 with extension")
 
+# Show the image correlation with a 7x7 filter
 median_7x7_extension = Image.open(test_image)
+begin_time = timeit.default_timer()
 median_7x7_extension = median_ixj(7, 7, median_7x7_extension)
+end_time = timeit.default_timer()
+print("Median 7x7 with extension: ", end_time - begin_time)
 median_7x7_extension.show(title="Median 7x7 with extension")
 
 # List all files in the directory
@@ -44,4 +48,5 @@ files = os.listdir(directory)
 for file in files:
     # Verify if the file is a .txt
     if file.endswith(".txt"):
+        # Execute the function to all files .txt
         image = read_correlational_filters(directory + file)
