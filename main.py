@@ -1,6 +1,4 @@
-import os
 from modules import *
-import timeit
 
 directory = "tests/"
 test_image = directory+"image.png"
@@ -49,4 +47,4 @@ for file in files:
     # Verify if the file is a .txt
     if file.endswith(".txt"):
         # Execute the function to all files .txt
-        image = read_correlational_filters(directory + file)
+        read_correlational_filters(directory + file)

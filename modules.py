@@ -2,6 +2,8 @@ from typing import List, Tuple
 from PIL import Image
 import numpy as np
 from numpy import ndarray
+import os
+import timeit
 
 
 def get_negative_pixels(image: Image) -> List:
@@ -212,7 +214,7 @@ def correlational(image: Image, size: Tuple[int, int], correlational_filter: nda
     window = correlational_filter
 
     # how many rows and columns will be expanded by 0
-    mxn_extended = (m//2, n//2)
+    mxn_extended = (m // 2, n // 2)
 
     # final image will be the 'result'
     result = np.zeros_like(im)
@@ -255,7 +257,7 @@ def histogram_expansion(image: Image) -> Image:
     min_intensity = np.min(image)
     max_intensity = np.max(image)
     im_expanded = (im - min_intensity) * \
-        (255 / (max_intensity - min_intensity))
+                  (255 / (max_intensity - min_intensity))
     output = Image.fromarray(np.uint8(im_expanded))
     return output
 
@@ -288,15 +290,29 @@ def read_correlational_filters(file_name: str) -> None:
                 treated_float = filters[j][i][h] if '/' in filters[j][i][h] else None
                 if treated_float:
                     split_float = filters[j][i][h].split('/')
-                    split_float = int(split_float[0])/int(split_float[1])
+                    split_float = int(split_float[0]) / int(split_float[1])
                     filters[j][i][h] = split_float
             filters[j][i] = [float(_) for _ in filters[j][i]]
 
         finished_arrays[j] = np.array(np.array(filters[j]))
 
     im = Image.open("tests/image.png")
-    for i in range(len(finished_arrays)):
-        im = call_correlation_mxn(im, finished_arrays[i], offsets[i])
+    if file_name == "tests/box_11x1(box_1x11(image)).txt":
+        begin_time = timeit.default_timer()
+        for i in range(len(finished_arrays)):
+            im = call_correlation_mxn(im, finished_arrays[i], offsets[i])
+
+        end_time = timeit.default_timer()
+        print("Time of box_11x1(box_1x11(image)): ", end_time - begin_time)
+
+    elif file_name == "tests/box_11x11.txt":
+        begin_time = timeit.default_timer()
+        im = call_correlation_mxn(im, finished_arrays[0], offsets[0])
+        end_time = timeit.default_timer()
+        print("Time of box_11x11: ", end_time - begin_time)
+    else:
+        for i in range(len(finished_arrays)):
+            im = call_correlation_mxn(im, finished_arrays[i], offsets[i])
 
     if file_name in ["tests/sobel_horizontal.txt", "tests/sobel_vertical.txt"]:
         im = histogram_expansion(im)
